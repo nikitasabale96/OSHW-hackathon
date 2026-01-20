@@ -6,11 +6,11 @@ import SectionTitle from "../components/SectionTitle.astro";
 import ThemeCards from "../components/ThemeCards.astro";
 import WhyParticipate from "../components/WhyParticipate.astro";
 import WhatYouWillDo from "../components/WhatYouWillDo.astro";
-import BigCTA from "../components/BigCTA.astro";
-import Footer from "../components/Footer.astro";
+import Register from "../components/Register.astro";
+
 ---
 
-<Layout title="FOSSEE OSHW Hackathon 2026" navPosition="fixed">
+<Layout title="FOSSEE OSHW Hackathon 2026" navPosition="sticky" headerOverlay>
 
 
   <main>
@@ -35,7 +35,7 @@ import Footer from "../components/Footer.astro";
 
     </div>
     </section>
-    <section id="themes" class="py-12">
+    <section id="themes" class="py-12 bg-slate-50">
       <div class="max-w-auto mx-auto px-6">
         <SectionTitle id="themesTitle" title="HACKATHON THEMES & SDG ALIGNMENT" />
         <ThemeCards />
@@ -114,8 +114,8 @@ import Footer from "../components/Footer.astro";
       </div>
     </section>
 
-    <BigCTA />
+    <Register />
   </main>
 
-  <Footer />
+  
 </Layout>

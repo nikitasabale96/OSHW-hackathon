@@ -1,12 +1,10 @@
 ---
-import fos from "../images/fossee-logo.png";
-import iit from "../images/IITB-logo.png";
-
-const { position = "fixed" } = Astro.props;
-const isOverlay = position === "fixed";
+const { position = "fixed", overlay, offsetTop = false } = Astro.props;
+const isOverlay = overlay ?? position === "fixed";
+const fixedTopClass = offsetTop ? "top-[var(--logo-bar-height)]" : "top-0";
 const positionClass =
   position === "fixed"
-    ? "fixed top-0 inset-x-0"
+    ? `fixed ${fixedTopClass} inset-x-0`
     : position === "sticky"
       ? "sticky top-0"
       : "relative";
@@ -24,9 +22,11 @@ const toggleClass = [
     : "text-slate-700 border-slate-200 bg-white hover:bg-slate-50",
 ].join(" ");
 const linkClass =
-  "text-base font-medium text-current opacity-90 hover:opacity-100 transition whitespace-nowrap";
+  "text-base md:text-lg font-medium text-current opacity-90 hover:opacity-100 transition whitespace-nowrap";
 const mobileLinkClass =
   "block px-5 py-3 text-base font-medium text-slate-900 hover:bg-slate-50 transition";
+
+
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/#about", label: "About" },
@@ -37,71 +37,50 @@ const navItems = [
 
 <nav id="site-nav" class={navClass} data-overlay={isOverlay ? "true" : "false"}>
   <div class="max-w-7xl mx-auto px-6">
-    <div class="h-18 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4 ">
-        <!-- IIT Bombay -->
-        <img
-          src={iit.src}
-          alt="IIT Bombay"
-          class="h-12 w-auto md:h-18 bg-white"
-          loading="lazy"
-          decoding="async"
-        />
+    <div class="h-18 flex items-center gap-4 py-2">
+        <div class="hidden md:flex flex-1" aria-hidden="true"></div>
+        <div class="hidden md:flex flex-1 items-center justify-center gap-8">
+          {
+            navItems.map((item) => (
+              <a href={item.href} class={linkClass} data-nav-link={item.href}>
+                {item.label}
+              </a>
+            ))
+          }
+        </div>
 
-        <span class="hidden text-sm text-slate-400 sm:inline">|</span>
+        <div class="hidden md:flex flex-1 items-center justify-end">
+          <a
+            href="/#register"
+            class="rounded-md bg-orange-500 px-4 py-2 text-white font-semibold shadow-sm hover:bg-orange-600 transition"
+          >
+            Register Now
+          </a>
+        </div>
 
-        <!-- FOSSEE -->
-        <img
-          src={fos.src}
-          alt="FOSSEE"
-          class="h-12 w-auto md:h-20"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-
-      <div class="hidden md:flex items-center gap-8">
-        {
-          navItems.map((item) => (
-            <a href={item.href} class={linkClass} data-nav-link={item.href}>
-              {item.label}
-            </a>
-          ))
-        }
-      </div>
-
-      <div class="hidden md:flex items-center">
-        <a
-          href="/#register"
-          class="rounded-md bg-orange-500 px-4 py-2 text-white font-semibold shadow-sm hover:bg-orange-600 transition"
+        <button
+          id="nav-toggle"
+          class={`ml-auto md:hidden ${toggleClass}`}
+          type="button"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          Register Now
-        </a>
-      </div>
-
-      <button
-        id="nav-toggle"
-        class={`md:hidden ${toggleClass}`}
-        type="button"
-        aria-controls="mobile-menu"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <svg
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
+          <svg
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
     </div>
 
     <div id="mobile-menu" class="md:hidden hidden pb-4">
@@ -136,9 +115,26 @@ const navItems = [
 
 <script>
   const nav = document.getElementById("site-nav");
+  const logoBar = document.getElementById("logo-bar");
   const navToggle = document.getElementById("nav-toggle");
   const mobileMenu = document.getElementById("mobile-menu");
+  const iitBadge = document.querySelector(".iitbombay");
   const overlay = nav?.dataset.overlay === "true";
+  const logoOverlay = logoBar?.dataset.overlay === "true";
+  const root = document.body || document.documentElement;
+
+  const setHeaderVars = () => {
+    const logoHeight = logoBar?.offsetHeight ?? 0;
+    const navHeight = nav?.offsetHeight ?? 0;
+    root.style.setProperty("--logo-bar-height", `${logoHeight}px`);
+    root.style.setProperty("--nav-height", `${navHeight}px`);
+    root.style.setProperty("--header-height", `${logoHeight + navHeight}px`);
+  };
+  if ("ResizeObserver" in window) {
+    const headerObserver = new ResizeObserver(() => setHeaderVars());
+    if (logoBar) headerObserver.observe(logoBar);
+    if (nav) headerObserver.observe(nav);
+  }
 
   const closeMenu = () => {
     if (!mobileMenu || !navToggle) return;
@@ -163,6 +159,8 @@ const navItems = [
   });
   window.addEventListener("resize", () => {
     if (window.innerWidth >= 768) closeMenu();
+    setHeaderVars();
+    if (overlay) setNav();
   });
 
   const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
@@ -224,10 +222,31 @@ const navItems = [
     }
   };
 
+  const isNarrow = () => window.matchMedia("(max-width: 483px)").matches;
   const setNav = () => {
     if (!nav || !overlay) return;
+    const allowLogoOverlay = logoOverlay && !isNarrow();
     const scrolled = window.scrollY > 40;
     if (scrolled) {
+      if (allowLogoOverlay) {
+        logoBar?.classList.add(
+          "bg-white/95",
+          "backdrop-blur",
+          "border-b",
+          "border-slate-200",
+          "text-slate-900",
+        );
+        logoBar?.classList.remove("bg-transparent", "text-white");
+      } else if (logoOverlay) {
+        logoBar?.classList.add("bg-transparent", "text-white");
+        logoBar?.classList.remove(
+          "bg-white/95",
+          "backdrop-blur",
+          "border-b",
+          "border-slate-200",
+          "text-slate-900",
+        );
+      }
       nav.classList.add(
         "bg-white/95",
         "backdrop-blur",
@@ -237,7 +256,32 @@ const navItems = [
         "text-slate-900",
       );
       nav.classList.remove("bg-transparent", "text-white");
+      if (allowLogoOverlay) {
+        iitBadge?.classList.add("brightness-0");
+        iitBadge?.classList.remove("bg-transparent");
+      } else if (logoOverlay) {
+        iitBadge?.classList.remove("brightness-0");
+      }
     } else {
+      if (allowLogoOverlay) {
+        logoBar?.classList.add("bg-transparent", "text-white");
+        logoBar?.classList.remove(
+          "bg-white/95",
+          "backdrop-blur",
+          "border-b",
+          "border-slate-200",
+          "text-slate-900",
+        );
+      } else if (logoOverlay) {
+        logoBar?.classList.add("bg-transparent", "text-white");
+        logoBar?.classList.remove(
+          "bg-white/95",
+          "backdrop-blur",
+          "border-b",
+          "border-slate-200",
+          "text-slate-900",
+        );
+      }
       nav.classList.add("bg-transparent", "text-white");
       nav.classList.remove(
         "bg-white/95",
@@ -247,6 +291,12 @@ const navItems = [
         "border-slate-200",
         "text-slate-900",
       );
+      if (allowLogoOverlay) {
+        iitBadge?.classList.add("bg-transparent");
+        iitBadge?.classList.remove("brightness-0");
+      } else if (logoOverlay) {
+        iitBadge?.classList.remove("brightness-0");
+      }
     }
     setToggleTone(scrolled);
   };
@@ -258,4 +308,6 @@ const navItems = [
   window.addEventListener("scroll", setActiveLink, { passive: true });
   window.addEventListener("hashchange", setActiveLink);
   setActiveLink();
+  setHeaderVars();
+  window.addEventListener("load", setHeaderVars);
 </script>
