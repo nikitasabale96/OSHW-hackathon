@@ -1,0 +1,78 @@
+---
+import healthcareImage from "../images/healthcare_2966486.png";
+import energyImage from "../images/eco-friendly_16517716.png";
+import cityImage from "../images/smart-city_3253488.png";
+
+const themes = [
+  {
+    title: "Healthcare & Assistive Devices",
+    image: healthcareImage.src,
+    imageAlt: "Healthcare and assistive devices",
+    subtitle: "Affordable • Accessible • Inclusive",
+    sdgs: ["SDG 3 – Good Health & Well-Being", "SDG 10 – Reduced Inequalities"],
+    bullets: [
+      "Low-cost diagnostics for primary healthcare",
+      "Wearables for community health monitoring",
+      "Assistive devices for elderly & persons with disabilities",
+      "Rural & remote healthcare tools",
+    ],
+  },
+  {
+    title: "Energy & Sustainability",
+    image: energyImage.src,
+    imageAlt: "Energy and sustainability",
+    subtitle: "Efficient • Clean • Resilient",
+    sdgs: ["SDG 7 – Affordable & Clean Energy", "SDG 13 – Climate Action"],
+    bullets: [
+      "Renewable energy integration & monitoring",
+      "Energy audit systems & smart meters",
+      "Power quality & efficient energy usage solutions",
+    ],
+  },
+  {
+    title: "Smart Campus / Smart City",
+    image: cityImage.src,
+    imageAlt: "Smart campus and smart city",
+    subtitle: "Safe • Sustainable • People-Centric",
+    sdgs: ["SDG 11 – Sustainable Cities & Communities", "SDG 9 – Industry, Innovation & Infrastructure"],
+    bullets: [
+      "Air Quality (AQI) & environmental monitoring",
+      "Energy management for campuses & public buildings",
+      "Safety systems with privacy-first design",
+      "Accessibility tools for inclusive infrastructure",
+    ],
+  },
+];
+---
+
+<div class="grid gap-6 md:grid-cols-3">
+  {themes.map((t) => (
+    <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="mb-3 flex justify-center">
+        <img src={t.image} alt={t.imageAlt} class="h-20 w-20" loading="lazy" />
+      </div>
+      <h3 class="font-semibold text-slate-800 text-xl text-center">{t.title}</h3>
+      <p class="mt-1 text-center text-xs font-medium tracking-wide text-slate-500">
+        {t.subtitle}
+      </p>
+      <ul class="mt-4 space-y-2 text-sm md:text-md ">
+        {t.bullets.map((b) => (
+          <li class="flex items-start gap-2">
+            <svg class="mt-0.5 h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-4 border-t border-slate-100 pt-3">
+        <p class="md:text-md text-sm font-semibold uppercase tracking-wide ">Aligned SDGs</p>
+        <ul class="mt-2 space-y-1 text-sm ">
+          {t.sdgs.map((sdg) => (
+            <li>{sdg}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  ))}
+</div>

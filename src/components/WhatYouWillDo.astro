@@ -1,0 +1,34 @@
+---
+import prototypeIcon from "../images/prototype.png";
+import schematicIcon from "../images/schematic.png";
+import openSourceIcon from "../images/open-source.png";
+import demoIcon from "../images/demo.png";
+
+const steps = [
+  { title: "Prototype Real Hardware", icon: prototypeIcon, alt: "Prototype" },
+  {
+    title: "Open Source Code & Schematics",
+    icon: schematicIcon,
+    alt: "Schematics",
+  },
+  { title: "Document & Share", icon: openSourceIcon, alt: "Open source" },
+  { title: "Demo Your Solution", icon: demoIcon, alt: "Demo" },
+];
+---
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+  {steps.map((step) => (
+    <div class="rounded-lg border border-slate-200 bg-slate-50 p-5 text-center shadow-sm">
+      <div class="mb-3 flex justify-center">
+        <img
+          src={step.icon.src}
+          alt={step.alt}
+          class="h-12 w-12 object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="text-sm font-semibold text-slate-700">{step.title}</div>
+    </div>
+  ))}
+</div>
